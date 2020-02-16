@@ -4,7 +4,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import TextField from '@material-ui/core/Textfield';
 import grey from '@material-ui/core/colors/grey';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -12,7 +11,7 @@ const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
   appBar: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
@@ -20,18 +19,14 @@ const useStyles = makeStyles(theme => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       display: 'none',
     },
   },
   toolbar: theme.mixins.toolbar,
 }));
 
-const HeaderBar = () => {
-  const handleDrawerToggle = () => {
-    console.log('testing');
-  };
-
+const HeaderBar = ({ handleDrawerToggle }) => {
   const classes = useStyles();
 
   return (
@@ -44,13 +39,10 @@ const HeaderBar = () => {
           onClick={handleDrawerToggle}
           className={classes.menuButton}
         >
-          <MenuIcon />
+          <MenuIcon style={{ color: 'black' }} />
         </IconButton>
-        {/* <TextField
-          id="outlined-basic"
-          label="Outlined"
-          variant="outlined"
-        /> */}
+        {/* TODO: change h2 to something else (?)  */}
+        <h2 style={{ color: 'black' }}>Do It Together!</h2>
       </Toolbar>
     </AppBar>
   );
