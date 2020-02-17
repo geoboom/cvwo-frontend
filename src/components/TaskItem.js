@@ -18,6 +18,8 @@ import Chip from '@material-ui/core/Chip';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 
+import './TaskItem.css';
+
 const useStyles = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar,
   root: {
@@ -50,8 +52,11 @@ const useStyles = makeStyles(theme => ({
     },
   },
   formControl: {
-    margin: theme.spacing(1),
-    minWidth: 140,
+    // [theme.breakpoints.up('md')]: {
+    //   marginLeft: theme.spacing(1),
+    //   marginRight: theme.spacing(1),
+    // },
+    minWidth: 80,
   },
   searchWrapper: {
     minWidth: 120,
@@ -63,20 +68,21 @@ const useStyles = makeStyles(theme => ({
   listItem: {
     userSelect: 'none',
     cursor: 'pointer',
-    '&:hover': {
-      background: grey['100'],
-    },
   },
   paper: {
     position: 'absolute',
-    top: `calc(50% - ${theme.mixins.toolbar.minHeight}px - 50px)`,
-    left: `calc(50% - 240px + 50px)`,
-    width: 400,
+    top: '50%',
+    left: '50%',
+    WebkitTransform: 'translate(-50%, -50%)',
+    width: 360,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
 }));
+
+const STATUSES = ['To Do', 'Doing', 'Completed'];
+const STATUSES_SELECTABLE = ['Backlog', 'Completed'];
 
 const TaskModal = ({ modalProps, task }) => {
   const classes = useStyles();
@@ -92,7 +98,7 @@ const TaskModal = ({ modalProps, task }) => {
   );
 };
 
-const TaskItem = ({ task }) => {
+const TaskItem = ({ task, taskStatusChange }) => {
   const classes = useStyles();
   const { description, user, status } = task;
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -106,7 +112,24 @@ const TaskItem = ({ task }) => {
       }}
     >
       <div style={{ flex: 1, marginRight: 10 }}>{description}</div>
-      <Chip label={status} />
+      <FormControl
+        style={{ padding: 0 }}
+        size="small"
+        className={classes.formControl}
+        variant="outlined"
+      >
+        <Select
+          style={{ fontSize: 12, padding: 0, margin: 0 }}
+          value={status}
+          onChange={taskStatusChange}
+        >
+          {STATUSES.map(status => (
+            <MenuItem style={{ fontSize: 12 }} key={status} value={status}>
+              {status}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     </div>
   );
 
@@ -119,7 +142,11 @@ const TaskItem = ({ task }) => {
   };
 
   return (
-    <ListItem alignItems="flex-start" className={classes.listItem}>
+    <ListItem
+      alignItems="flex-start"
+      className={classes.listItem}
+      id="listItem"
+    >
       <TaskModal
         modalProps={{
           open: modalOpen,
@@ -128,8 +155,10 @@ const TaskItem = ({ task }) => {
         task={task}
       />
       <ListItemText
-        onTouchStart={handleModalOpen}
-        onDoubleClick={handleModalOpen}
+        onClick={e => {
+          e.stopPropagation();
+          handleModalOpen();
+        }}
         primary={primary}
         secondary={
           <React.Fragment>

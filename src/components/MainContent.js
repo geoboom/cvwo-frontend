@@ -76,6 +76,12 @@ const TASKS = [
     user: 'lyssa',
     status: STATUSES[2],
   },
+  {
+    _id: 9,
+    description: 'this is task F',
+    user: 'lyssa',
+    status: STATUSES[1],
+  },
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -84,10 +90,11 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
+    height: '100%',
     padding: theme.spacing(3),
-    [theme.breakpoints.down('md')]: {
-      paddingLeft: 10,
-      paddingRight: 10,
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(1),
+      paddingTop: theme.spacing(3),
     },
     backgroundColor: grey['200'],
   },
@@ -122,20 +129,24 @@ const useStyles = makeStyles(theme => ({
     },
   },
   formControl: {
-    margin: theme.spacing(1),
+    [theme.breakpoints.up('md')]: {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+    },
     minWidth: 140,
   },
   searchWrapper: {
     flex: 0.5,
-    minWidth: 200,
+    maxWidth: 240,
+    minWidth: 120,
     [theme.breakpoints.up('md')]: {
-      flex: 0.2,
+      flex: 0.4,
     },
   },
   fab: {
     position: 'absolute',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
+    bottom: theme.spacing(3),
+    right: theme.spacing(3),
     [theme.breakpoints.up('md')]: {
       bottom: theme.spacing(4),
       right: theme.spacing(4),
@@ -143,23 +154,31 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     position: 'absolute',
-    top: `calc(50% - ${theme.mixins.toolbar.minHeight}px - 50px)`,
-    left: `calc(50% - 240px + 50px)`,
-    width: 400,
+    top: '50%',
+    left: '50%',
+    WebkitTransform: 'translate(-50%, -50%)',
+    width: 360,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
 }));
 
-const TaskList = ({ tasks }) => {
+const TaskList = ({ tasks, taskStatusChange }) => {
   const classes = useStyles();
 
   return (
     <List className={classes.listRoot}>
       {tasks.map(task => (
         <div style={{ width: '98%', margin: '0 auto' }}>
-          <TaskItem key={task._id} task={task} />
+          <TaskItem
+            key={task._id}
+            task={task}
+            taskStatusChange={e => {
+              e.stopPropagation();
+              taskStatusChange(task._id, e.target.value);
+            }}
+          />
           <Divider />
         </div>
       ))}
@@ -207,10 +226,54 @@ const AddTaskModal = ({ modalProps, addTask }) => {
   );
 };
 
+const Row1 = ({ handleTextChange, status, handleSelectChange }) => {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.utilsBar}>
+      <div className={classes.searchWrapper}>
+        <TextField
+          onChange={handleTextChange}
+          size="small"
+          label="Search"
+          fullWidth
+          variant="outlined"
+          onBlur={e => e.stopPropagation()}
+        />
+      </div>
+      <div style={{ width: 5 }} />
+      <div style={{ flexDirection: 'row', display: 'flex' }}>
+        <FormControl
+          size="small"
+          className={classes.formControl}
+          variant="outlined"
+        >
+          <Select value={status} onChange={handleSelectChange}>
+            {STATUSES_SELECTABLE.map(status => (
+              <MenuItem key={status} value={status}>
+                {status}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Hidden smDown implementation="css">
+          <FormControlLabel
+            style={{ margin: 0 }}
+            value="start"
+            control={<Checkbox color="primary" />}
+            label="Show only my tasks"
+            labelPlacement="start"
+          />
+        </Hidden>
+      </div>
+    </div>
+  );
+};
+
 const MainContent = () => {
   const classes = useStyles();
   const [status, setStatus] = React.useState(STATUSES_SELECTABLE[0]);
-  const [modalOpen, setModalOpen] = React.useState(true);
+  const [modalOpen, setModalOpen] = React.useState(false);
 
   const filterTasks = (tasks, status) => {
     if (status === STATUSES_SELECTABLE[1])
@@ -223,6 +286,15 @@ const MainContent = () => {
   const handleSelectChange = event => {
     setStatus(event.target.value);
     setTasks(filterTasks(TASKS, event.target.value));
+  };
+
+  const taskStatusChange = (_id, status) => {
+    setTasks(
+      tasks.map(task => {
+        if (task._id === _id) return { ...task, status };
+        return task;
+      }),
+    );
   };
 
   const addTask = description => {
@@ -245,38 +317,11 @@ const MainContent = () => {
       <div className={classes.toolbar} />
       <Card className={classes.card}>
         <CardContent className={classes.cardContent}>
-          <div className={classes.utilsBar}>
-            <div className={classes.searchWrapper}>
-              <TextField
-                onChange={handleTextChange}
-                size="small"
-                label="Search"
-                fullWidth
-                variant="outlined"
-              />
-            </div>
-            <div style={{ width: 5 }} />
-            <div style={{ flexDirection: 'row', display: 'flex' }}>
-              <FormControl className={classes.formControl}>
-                <Select value={status} onChange={handleSelectChange}>
-                  {STATUSES_SELECTABLE.map(status => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Hidden smDown implementation="css">
-                <FormControlLabel
-                  style={{ margin: 0 }}
-                  value="start"
-                  control={<Checkbox color="primary" />}
-                  label="Show only my tasks"
-                  labelPlacement="start"
-                />
-              </Hidden>
-            </div>
-          </div>
+          <Row1
+            status={status}
+            handleTextChange={handleTextChange}
+            handleSelectChange={handleSelectChange}
+          />
           <Hidden mdUp implementation="css">
             <div className={classes.utilsBar}>
               <FormControlLabel
@@ -289,7 +334,7 @@ const MainContent = () => {
             </div>
           </Hidden>
           <hr style={{ width: '100%', marginTop: 10, marginBottom: 10 }} />
-          <TaskList tasks={tasks} />
+          <TaskList tasks={tasks} taskStatusChange={taskStatusChange} />
         </CardContent>
       </Card>
       <AddTaskModal

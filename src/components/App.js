@@ -8,7 +8,8 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
-    height: '100vh',
+    position: 'fixed',
+    height: '100%',
     width: '100%',
   },
 }));
@@ -16,12 +17,23 @@ const useStyles = makeStyles(theme => ({
 const App = () => {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  // const [height, setHeight] = React.useState(window.innerHeight);
+
+  // React.useEffect(() => {
+  //   function handleResize() {
+  //     setHeight(window.innerHeight);
+  //   }
+
+  //   window.addEventListener('resize', handleResize);
+  //   return () => window.removeEventListener('resize', handleResize);
+  // }, []);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   return (
+    // <div className={{ ...classes.root, height }}>
     <div className={classes.root}>
       <CssBaseline />
       <HeaderBar handleDrawerToggle={handleDrawerToggle} />
