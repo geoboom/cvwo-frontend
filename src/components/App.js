@@ -4,6 +4,17 @@ import LeftDrawer from './LeftDrawer';
 import HeaderBar from './HeaderBar';
 import MainContent from './MainContent';
 import { makeStyles } from '@material-ui/core/styles';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+  useHistory,
+  useLocation,
+} from "react-router-dom";
+import LoginSignup from './LoginSignup';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -17,23 +28,12 @@ const useStyles = makeStyles(theme => ({
 const App = () => {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  // const [height, setHeight] = React.useState(window.innerHeight);
-
-  // React.useEffect(() => {
-  //   function handleResize() {
-  //     setHeight(window.innerHeight);
-  //   }
-
-  //   window.addEventListener('resize', handleResize);
-  //   return () => window.removeEventListener('resize', handleResize);
-  // }, []);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   return (
-    // <div className={{ ...classes.root, height }}>
     <div className={classes.root}>
       <CssBaseline />
       <HeaderBar handleDrawerToggle={handleDrawerToggle} />
@@ -46,4 +46,52 @@ const App = () => {
   );
 };
 
-export default App;
+const PrivateRoute = ({ children, ...rest }) => {
+  return (
+    <Route
+      {...rest}
+      render={
+        ({ location }) => {
+          return (
+            <Redirect
+              to={{
+                pathname:'auth',
+                state: { from: location }
+              }}
+            />
+          );
+        }
+      }
+    >
+    </Route>
+  );
+};
+
+const AppRot = () => {
+  const [user, setUser] = React.useState({});
+
+  return (
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <Redirect
+            to={{
+              pathname:'home',
+            }}
+          />
+        </Route>
+        <Route path="/auth">
+          <LoginSignup />
+        </Route>
+        <PrivateRoute path="/home">
+          <LoginSignup />
+        </PrivateRoute>
+        <Route>
+          <App/>
+        </Route>
+      </Switch>
+    </Router>
+  );
+};
+
+export default AppRoot;
