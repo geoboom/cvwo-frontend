@@ -12,9 +12,10 @@ import {
   Redirect,
   useHistory,
   useLocation,
-} from "react-router-dom";
-import LoginSignup from './LoginSignup';
+} from 'react-router-dom';
 
+import LoginSignup from './LoginSignup';
+import { AuthContext } from '../context/auth';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,47 +51,46 @@ const PrivateRoute = ({ children, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={
-        ({ location }) => {
-          return (
-            <Redirect
-              to={{
-                pathname:'auth',
-                state: { from: location }
-              }}
-            />
-          );
-        }
-      }
-    >
-    </Route>
+      render={({ location }) => {
+        return (
+          <Redirect
+            to={{
+              pathname: 'auth',
+              state: { from: location },
+            }}
+          />
+        );
+      }}
+    ></Route>
   );
 };
 
-const AppRot = () => {
+const AppRoot = () => {
   const [user, setUser] = React.useState({});
 
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/">
-          <Redirect
-            to={{
-              pathname:'home',
-            }}
-          />
-        </Route>
-        <Route path="/auth">
-          <LoginSignup />
-        </Route>
-        <PrivateRoute path="/home">
-          <LoginSignup />
-        </PrivateRoute>
-        <Route>
-          <App/>
-        </Route>
-      </Switch>
-    </Router>
+    <AuthContext.Provider value={{ username: 'testing' }}>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <Redirect
+              to={{
+                pathname: 'home',
+              }}
+            />
+          </Route>
+          <Route path="/auth">
+            <LoginSignup />
+          </Route>
+          <PrivateRoute path="/home">
+            <LoginSignup />
+          </PrivateRoute>
+          <Route>
+            <App />
+          </Route>
+        </Switch>
+      </Router>
+    </AuthContext.Provider>
   );
 };
 

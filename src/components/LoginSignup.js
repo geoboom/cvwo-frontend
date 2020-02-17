@@ -12,8 +12,9 @@ import {
   Redirect,
   useHistory,
   useLocation,
-} from "react-router-dom";
+} from 'react-router-dom';
 
+import { useAuth } from '../context/auth';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,6 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 const LoginSignup = () => {
   const classes = useStyles();
+  const { username } = useAuth();
 
   return (
     <div className={classes.root}>
@@ -33,10 +35,10 @@ const LoginSignup = () => {
       <div>
         <h1>Welcome to Do It Together</h1>
         <h2>Login/Signup route</h2>
+        <h3>{username}</h3>
       </div>
     </div>
   );
 };
 
 export default LoginSignup;
-
