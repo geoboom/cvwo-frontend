@@ -116,7 +116,7 @@ const TaskItem = ({ task, taskStatusChange }) => {
   const { description, nickname, status } = task;
   const [modalOpen, setModalOpen] = React.useState(false);
 
-  const primary = (
+  const Primary = () => (
     <div
       style={{
         display: 'flex',
@@ -173,7 +173,7 @@ const TaskItem = ({ task, taskStatusChange }) => {
         id="listItem"
       >
         <ListItemText
-          primary={primary}
+          primary={<Primary />}
           secondary={
             <React.Fragment>
               <Typography

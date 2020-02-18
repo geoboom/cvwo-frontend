@@ -14,6 +14,7 @@ import {
   useHistory,
   useLocation,
 } from 'react-router-dom';
+import { createConsumer } from '@rails/actioncable';
 
 import LoginSignup from './LoginSignup';
 import { AuthContext, useAuthContext } from '../context/auth';
@@ -78,6 +79,8 @@ const PrivateRoute = ({ children, ...rest }) => {
 //   authToken: '123123123',
 // };
 
+const wsUrl = 'ws://localhost:3001/cable?nickname=geoboom';
+
 const AppRoot = () => {
   const [user, setUser] = React.useState();
   const [tasks, setTasks] = React.useState(INITIAL_TASKS);
@@ -85,6 +88,26 @@ const AppRoot = () => {
   const authenticate = user => {
     setUser(user);
   };
+
+  React.useEffect(() => {
+    const client = new createConsumer(wsUrl);
+    const presenceChannel = client.subscriptions.create(
+      {
+        channel: 'PresenceChannel',
+      },
+      {
+        received(data) {
+          console.log(data);
+        },
+      },
+    );
+
+    setTimeout(() => {
+      presenceChannel.send({
+        body: 'testing',
+      });
+    }, 1500);
+  });
 
   return (
     <TaskContext.Provider value={{ tasks, setTasks }}>
@@ -134,42 +157,6 @@ const INITIAL_TASKS = [
     description: 'this is task three',
     nickname: 'rawrxd',
     status: STATUSES[0],
-  },
-  {
-    _id: 4,
-    description: 'this is task four',
-    nickname: 'rawrxd',
-    status: STATUSES[1],
-  },
-  {
-    _id: 5,
-    description: 'this is task A',
-    nickname: 'monkaS',
-    status: STATUSES[1],
-  },
-  {
-    _id: 6,
-    description: 'this is task B',
-    nickname: 'monkaS',
-    status: STATUSES[2],
-  },
-  {
-    _id: 7,
-    description: 'this is task D',
-    nickname: 'monkaS',
-    status: STATUSES[2],
-  },
-  {
-    _id: 8,
-    description: 'this is task E',
-    nickname: 'monkaS',
-    status: STATUSES[2],
-  },
-  {
-    _id: 9,
-    description: 'this is task F',
-    nickname: 'monkaS',
-    status: STATUSES[1],
   },
 ];
 
