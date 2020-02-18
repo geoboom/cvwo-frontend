@@ -81,7 +81,7 @@ const LoginSignup = () => {
     setInput(e.target.value);
   };
 
-  return user.authToken ? (
+  return user && user.authToken ? (
     <Redirect to="/home" />
   ) : (
     <div className={classes.root}>

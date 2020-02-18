@@ -58,7 +58,7 @@ const PrivateRoute = ({ children, ...rest }) => {
     <Route
       {...rest}
       render={({ location }) => {
-        return user.authToken ? (
+        return user && user.authToken ? (
           children
         ) : (
           <Redirect
