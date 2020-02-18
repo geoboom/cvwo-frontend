@@ -2,6 +2,7 @@ import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import LeftDrawer from './LeftDrawer';
 import HeaderBar from './HeaderBar';
+import grey from '@material-ui/core/colors/grey';
 import MainContent from './MainContent';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -21,9 +22,11 @@ import { TaskContext, useTaskContext } from '../context/task';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
+    justifyContent: 'center',
     position: 'fixed',
     height: '100%',
     width: '100%',
+    backgroundColor: grey['200'],
   },
 }));
 

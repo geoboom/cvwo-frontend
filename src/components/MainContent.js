@@ -1,5 +1,4 @@
 import React from 'react';
-import grey from '@material-ui/core/colors/grey';
 import Hidden from '@material-ui/core/Hidden';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -38,14 +37,14 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    flexGrow: 1,
     height: '100%',
     padding: theme.spacing(3),
+    width: '70%',
     [theme.breakpoints.down('sm')]: {
+      width: '98%',
       padding: theme.spacing(1),
       paddingTop: theme.spacing(3),
     },
-    backgroundColor: grey['200'],
   },
   listRoot: {
     height: '100%',
