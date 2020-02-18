@@ -1,2 +1,3 @@
-# CVWO Assignment Frontend
-Made in react. Hosting and CI/CD via AWS Amplify.
+# Do It Together, a real-time todo app
+## Built for CVWO Assignment
+Made in react. Hosting and CI/CD via Netlify.
