@@ -60,7 +60,7 @@ const LoginSignup = () => {
     setInput(nickname);
     setError('');
     if (nickname.length < 4 || nickname.length > 12) {
-      setError('Nickname must be between 6 and 12 characters.');
+      setError('Nickname must be between 4 and 12 characters.');
       return;
     }
 
