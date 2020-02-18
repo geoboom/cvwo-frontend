@@ -79,7 +79,7 @@ const PrivateRoute = ({ children, ...rest }) => {
 // };
 
 const AppRoot = () => {
-  const [user, setUser] = React.useState(user_rawr);
+  const [user, setUser] = React.useState();
   const [tasks, setTasks] = React.useState(INITIAL_TASKS);
 
   const authenticate = user => {
