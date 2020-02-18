@@ -1,7 +1,7 @@
 import React from 'react';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
-import indigo from '@material-ui/core/colors/indigo';
+import blueGrey from '@material-ui/core/colors/blueGrey';
 import Hidden from '@material-ui/core/Hidden';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   drawerPaper: {
-    backgroundColor: indigo['900'],
+    backgroundColor: blueGrey['900'],
     width: drawerWidth,
   },
   toolbar: theme.mixins.toolbar,

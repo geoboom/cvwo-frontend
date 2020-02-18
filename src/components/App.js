@@ -15,7 +15,8 @@ import {
 } from 'react-router-dom';
 
 import LoginSignup from './LoginSignup';
-import { AuthContext } from '../context/auth';
+import { AuthContext, useAuthContext } from '../context/auth';
+import { TaskContext, useTaskContext } from '../context/task';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,21 +39,25 @@ const App = () => {
     <div className={classes.root}>
       <CssBaseline />
       <HeaderBar handleDrawerToggle={handleDrawerToggle} />
-      <LeftDrawer
+      {/* <LeftDrawer
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
-      />
+      /> */}
       <MainContent />
     </div>
   );
 };
 
 const PrivateRoute = ({ children, ...rest }) => {
+  const { user } = useAuthContext();
+
   return (
     <Route
       {...rest}
       render={({ location }) => {
-        return (
+        return user.authToken ? (
+          children
+        ) : (
           <Redirect
             to={{
               pathname: 'auth',
@@ -65,33 +70,104 @@ const PrivateRoute = ({ children, ...rest }) => {
   );
 };
 
+const user_rawr = {
+  nickname: 'geoboom',
+  authToken: '123123123',
+};
+
 const AppRoot = () => {
-  const [user, setUser] = React.useState({});
+  const [user, setUser] = React.useState(user_rawr);
+  const [tasks, setTasks] = React.useState(INITIAL_TASKS);
+
+  const authenticate = user => {
+    setUser(user);
+  };
 
   return (
-    <AuthContext.Provider value={{ username: 'testing' }}>
-      <Router>
-        <Switch>
-          <Route exact path="/">
-            <Redirect
-              to={{
-                pathname: 'home',
-              }}
-            />
-          </Route>
-          <Route path="/auth">
-            <LoginSignup />
-          </Route>
-          <PrivateRoute path="/home">
-            <LoginSignup />
-          </PrivateRoute>
-          <Route>
-            <App />
-          </Route>
-        </Switch>
-      </Router>
-    </AuthContext.Provider>
+    <TaskContext.Provider value={{ tasks, setTasks }}>
+      <AuthContext.Provider value={{ user, authenticate }}>
+        <Router>
+          <Switch>
+            <Route exact path="/">
+              <Redirect
+                to={{
+                  pathname: 'home',
+                }}
+              />
+            </Route>
+            <Route path="/auth">
+              <LoginSignup />
+            </Route>
+            <PrivateRoute path="/home">
+              <App />
+            </PrivateRoute>
+            <Route>
+              <App />
+            </Route>
+          </Switch>
+        </Router>
+      </AuthContext.Provider>
+    </TaskContext.Provider>
   );
 };
+
+const STATUSES = ['To Do', 'Doing', 'Completed'];
+const INITIAL_TASKS = [
+  {
+    _id: 1,
+    description: 'the quick brown fox jumps over the lazy dog',
+    nickname: 'geoboom',
+    status: STATUSES[0],
+  },
+  {
+    _id: 2,
+    description:
+      'a checkbox can either be a primayr action ot a secondary action rawr xd',
+    nickname: 'geoboom',
+    status: STATUSES[0],
+  },
+  {
+    _id: 3,
+    description: 'this is task three',
+    nickname: 'chef',
+    status: STATUSES[0],
+  },
+  {
+    _id: 4,
+    description: 'this is task four',
+    nickname: 'chef',
+    status: STATUSES[1],
+  },
+  {
+    _id: 5,
+    description: 'this is task A',
+    nickname: 'lyssa',
+    status: STATUSES[1],
+  },
+  {
+    _id: 6,
+    description: 'this is task B',
+    nickname: 'lyssa',
+    status: STATUSES[2],
+  },
+  {
+    _id: 7,
+    description: 'this is task D',
+    nickname: 'lyssa',
+    status: STATUSES[2],
+  },
+  {
+    _id: 8,
+    description: 'this is task E',
+    nickname: 'lyssa',
+    status: STATUSES[2],
+  },
+  {
+    _id: 9,
+    description: 'this is task F',
+    nickname: 'lyssa',
+    status: STATUSES[1],
+  },
+];
 
 export default AppRoot;

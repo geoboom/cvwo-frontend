@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
+import teal from '@material-ui/core/colors/teal';
 
 import './TaskItem.css';
 
@@ -74,7 +75,7 @@ const useStyles = makeStyles(theme => ({
     top: '50%',
     left: '50%',
     WebkitTransform: 'translate(-50%, -50%)',
-    width: 360,
+    minWidth: 300,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
@@ -82,7 +83,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const STATUSES = ['To Do', 'Doing', 'Completed'];
-const STATUSES_SELECTABLE = ['Backlog', 'Completed'];
 
 const TaskModal = ({ modalProps, task }) => {
   const classes = useStyles();
@@ -90,9 +90,22 @@ const TaskModal = ({ modalProps, task }) => {
   return (
     <Modal {...modalProps}>
       <div className={classes.paper}>
-        <h2>Text in a modal</h2>
-        <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
+        <Typography
+          style={{
+            color: teal['700'],
+            fontWeight: 'bold',
+          }}
+        >
+          Task related information
+        </Typography>
         <p>{task.description}</p>
+        <br />
+        <br />
+        <Divider />
+        <p>
+          <b>TODO for this pane:</b> edit/remove tasks, implement tagging
+          system.
+        </p>
       </div>
     </Modal>
   );
@@ -100,7 +113,7 @@ const TaskModal = ({ modalProps, task }) => {
 
 const TaskItem = ({ task, taskStatusChange }) => {
   const classes = useStyles();
-  const { description, user, status } = task;
+  const { description, nickname, status } = task;
   const [modalOpen, setModalOpen] = React.useState(false);
 
   const primary = (
@@ -142,11 +155,7 @@ const TaskItem = ({ task, taskStatusChange }) => {
   };
 
   return (
-    <ListItem
-      alignItems="flex-start"
-      className={classes.listItem}
-      id="listItem"
-    >
+    <React.Fragment>
       <TaskModal
         modalProps={{
           open: modalOpen,
@@ -154,26 +163,32 @@ const TaskItem = ({ task, taskStatusChange }) => {
         }}
         task={task}
       />
-      <ListItemText
+      <ListItem
+        alignItems="flex-start"
+        className={classes.listItem}
         onClick={e => {
-          e.stopPropagation();
           handleModalOpen();
+          e.stopPropagation();
         }}
-        primary={primary}
-        secondary={
-          <React.Fragment>
-            <Typography
-              component="span"
-              variant="body2"
-              className={classes.inline}
-              color="textPrimary"
-            >
-              {user}
-            </Typography>
-          </React.Fragment>
-        }
-      />
-    </ListItem>
+        id="listItem"
+      >
+        <ListItemText
+          primary={primary}
+          secondary={
+            <React.Fragment>
+              <Typography
+                component="span"
+                variant="body2"
+                className={classes.inline}
+                color="textPrimary"
+              >
+                {nickname}
+              </Typography>
+            </React.Fragment>
+          }
+        />
+      </ListItem>
+    </React.Fragment>
   );
 };
 
