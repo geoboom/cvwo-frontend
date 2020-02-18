@@ -110,8 +110,8 @@ const LoginSignup = () => {
               DITGT
             </Box>
           </Typography>
-          <Divider />
-          <br />
+          {/* <Divider /> */}
+          {/* <br /> */}
           {/* <div style={{ height: 5 }} /> */}
           <TextField
             size="small"
