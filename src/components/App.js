@@ -73,10 +73,10 @@ const PrivateRoute = ({ children, ...rest }) => {
   );
 };
 
-const user_rawr = {
-  nickname: 'geoboom',
-  authToken: '123123123',
-};
+// const user_rawr = {
+//   nickname: 'geoboom',
+//   authToken: '123123123',
+// };
 
 const AppRoot = () => {
   const [user, setUser] = React.useState(user_rawr);
