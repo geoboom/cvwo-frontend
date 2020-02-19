@@ -118,7 +118,7 @@ const LoginSignup = () => {
               color: 'red',
             }}
           >
-            Site will be functional at 1030, 19/02/2020.
+            Site will be functional at 1130, 19/02/2020. Give chance pls.
           </Typography>
           <TextField
             size="small"
