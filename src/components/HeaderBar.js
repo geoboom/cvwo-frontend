@@ -100,7 +100,7 @@ const HeaderBar = ({ handleDrawerToggle, width }) => {
             color: teal['700'],
             fontWeight: 'bold',
           }}
-          variant={isWidthUp('md', width) ? 'h4' : 'h5'}
+          variant={isWidthUp('sm', width) ? 'h4' : 'h5'}
         >
           Do it Together
         </Typography>

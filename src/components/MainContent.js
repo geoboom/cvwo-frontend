@@ -42,16 +42,12 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
     width: '70%',
     [theme.breakpoints.down('sm')]: {
+      maxWidth: 0.7*960,
       width: '98%',
-      padding: theme.spacing(1),
-      paddingTop: theme.spacing(3),
     },
-  },
-  listRoot: {
-    height: '100%',
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
-    overflow: 'auto',
+    [theme.breakpoints.down('xs')]: {
+      padding: theme.spacing(1),
+    },
   },
   card: {
     display: 'flex',
@@ -61,6 +57,12 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     display: 'flex',
     flexGrow: 1,
+  },
+  listRoot: {
+    height: '100%',
+    width: '100%',
+    backgroundColor: theme.palette.background.paper,
+    overflow: 'auto',
   },
   utilsBar: {
     display: 'flex',
