@@ -182,6 +182,9 @@ const TaskItem = ({ task, taskStatusChange, deleteTask }) => {
           style={{ fontSize: 12, padding: 0, margin: 0 }}
           value={status}
           onChange={taskStatusChange}
+          onClose={e => {
+            e.stopPropagation();
+          }}
         >
           {STATUSES.map(status => (
             <MenuItem style={{ fontSize: 12 }} key={status} value={status}>
@@ -218,8 +221,8 @@ const TaskItem = ({ task, taskStatusChange, deleteTask }) => {
         alignItems="flex-start"
         className={classes.listItem}
         onClick={e => {
-          handleModalOpen();
           e.stopPropagation();
+          handleModalOpen();
         }}
         id="listItem"
       >

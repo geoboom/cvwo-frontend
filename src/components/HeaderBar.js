@@ -82,6 +82,12 @@ const HeaderBar = ({ handleDrawerToggle, width }) => {
         <Typography>
           <b>Users online:</b> 0
         </Typography>
+        <Typography>
+          <b>How to play:</b> Get your friends/open new tabs and join with
+          different nicknames. Add new tasks or edit tasks' statuses and they
+          will be reflected in real time! Login as <em>admin</em> to delete
+          tasks! (click on a task and then the trash icon)
+        </Typography>
       </div>
     </Modal>
   );

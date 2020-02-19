@@ -113,13 +113,13 @@ const LoginSignup = () => {
           {/* <Divider /> */}
           {/* <br /> */}
           {/* <div style={{ height: 5 }} /> */}
-          <Typography
+          {/* <Typography
             style={{
               color: 'red',
             }}
           >
             Site will be functional at 1130, 19/02/2020. Give chance pls.
-          </Typography>
+          </Typography> */}
           <TextField
             size="small"
             label="Enter nickname"

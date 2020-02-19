@@ -54,8 +54,8 @@ const App = () => {
 
   React.useEffect(() => {
     const client = new createConsumer(
-      // `wss://cvwo-api.herokuapp.com/cable?nickname=${user.nickname}`,
-      `ws://localhost:3001/cable?nickname=${user.nickname}`,
+      `wss://cvwo-api.herokuapp.com/cable?nickname=${user.nickname}`,
+      // `ws://localhost:3001/cable?nickname=${user.nickname}`,
     );
     const taskChannel = client.subscriptions.create(
       {
