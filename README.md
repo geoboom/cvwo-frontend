@@ -8,6 +8,8 @@ for collaboration work!
 - Made in react.
 - Hosting and CI/CD via Netlify.
 - Communicates with backend (on herokuapp) mostly via Ruby on Rails ActionCable, a websockets implementation. 
+- Not very snappy - didn't have time to work on eager updates w/ rollback so have to wait
+  for response from ws before updating.
 - Due to time constraints:
   - No local/async storage unfortunately.
   - No redux/mobx state management either.
