@@ -110,12 +110,16 @@ const LoginSignup = () => {
               DITGT
             </Box>
           </Typography>
-          <Typography style={{ color: 'red' }} variant="caption">
-            (Backend still WIP. Will be up by 10am 19/02/2020. Pls give chance.)
-          </Typography>
           {/* <Divider /> */}
           {/* <br /> */}
           {/* <div style={{ height: 5 }} /> */}
+          <Typography
+            style={{
+              color: 'red',
+            }}
+          >
+            Site will be functional at 1030, 19/02/2020.
+          </Typography>
           <TextField
             size="small"
             label="Enter nickname"

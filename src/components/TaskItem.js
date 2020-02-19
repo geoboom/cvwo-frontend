@@ -15,9 +15,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
+import Button from '@material-ui/core/Button';
+import Edit from '@material-ui/icons/Edit';
+import Delete from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 import teal from '@material-ui/core/colors/teal';
+import { useAuthContext } from '../context/auth';
 
 import './TaskItem.css';
 
@@ -53,11 +58,16 @@ const useStyles = makeStyles(theme => ({
     },
   },
   formControl: {
-    // [theme.breakpoints.up('md')]: {
-    //   marginLeft: theme.spacing(1),
-    //   marginRight: theme.spacing(1),
-    // },
     minWidth: 80,
+  },
+  iconButton: {
+    padding: 4,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
   },
   searchWrapper: {
     minWidth: 120,
@@ -84,20 +94,56 @@ const useStyles = makeStyles(theme => ({
 
 const STATUSES = ['To Do', 'Doing', 'Completed'];
 
-const TaskModal = ({ modalProps, task }) => {
+const iconColor = teal['700'];
+const TaskModal = ({ modalProps, task, deleteTask }) => {
+  const { user } = useAuthContext();
   const classes = useStyles();
 
   return (
     <Modal {...modalProps}>
       <div className={classes.paper}>
-        <Typography
+        <div
           style={{
-            color: teal['700'],
-            fontWeight: 'bold',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
           }}
         >
-          Task related information
-        </Typography>
+          <Typography
+            style={{
+              color: teal['700'],
+              fontWeight: 'bold',
+            }}
+          >
+            Task related information
+          </Typography>
+          {user.nickname === 'admin' ? (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                marginTop: -4,
+                marginRight: -4,
+              }}
+            >
+              <IconButton
+                color="inherit"
+                onClick={() => {}}
+                className={classes.iconButton}
+              >
+                <Edit fontSize="medium" style={{ color: iconColor }} />
+              </IconButton>
+              <IconButton
+                color="inherit"
+                onClick={deleteTask}
+                className={classes.iconButton}
+              >
+                <Delete fontSize="medium" style={{ color: iconColor }} />
+              </IconButton>
+            </div>
+          ) : null}
+        </div>
         <p>{task.description}</p>
         <br />
         <br />
@@ -111,7 +157,7 @@ const TaskModal = ({ modalProps, task }) => {
   );
 };
 
-const TaskItem = ({ task, taskStatusChange }) => {
+const TaskItem = ({ task, taskStatusChange, deleteTask }) => {
   const classes = useStyles();
   const { description, nickname, status } = task;
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -126,6 +172,7 @@ const TaskItem = ({ task, taskStatusChange }) => {
     >
       <div style={{ flex: 1, marginRight: 10 }}>{description}</div>
       <FormControl
+        disabled={status === STATUSES[2]}
         style={{ padding: 0 }}
         size="small"
         className={classes.formControl}
@@ -162,6 +209,10 @@ const TaskItem = ({ task, taskStatusChange }) => {
           onClose: handleModalClose,
         }}
         task={task}
+        deleteTask={() => {
+          deleteTask();
+          setModalOpen(false);
+        }}
       />
       <ListItem
         alignItems="flex-start"

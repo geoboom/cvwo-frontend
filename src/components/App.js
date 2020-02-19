@@ -30,25 +30,111 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: grey['200'],
   },
 }));
+// const presenceChannel = client.subscriptions.create(
+//   {
+//     channel: 'PresenceChannel',
+//   },
+//   {
+//     received(data) {
+//       console.log(data);
+//     },
+//   },
+// );
 
 const App = () => {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [taskChannel, setTaskChannel] = React.useState();
+  const [tasks, setTasks] = React.useState([]);
+  const { user } = useAuthContext();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  React.useEffect(() => {
+    const client = new createConsumer(
+      `ws://cvwo-api.herokuapp.com/cable?nickname=${user.nickname}`,
+    );
+    const taskChannel = client.subscriptions.create(
+      {
+        channel: 'TaskChannel',
+      },
+      {
+        received: data => {
+          switch (data.type) {
+            case 'tasks':
+              setTasks(
+                data.payload.map(({ id, ...rest }) => ({ _id: id, ...rest })),
+              );
+              break;
+            case 'task': {
+              switch (data.operation) {
+                case 'add': {
+                  const task = data.payload;
+                  setTasks(prevTasks => [
+                    ...prevTasks,
+                    { _id: task.id, ...task },
+                  ]);
+                  break;
+                }
+                case 'update': {
+                  const task = data.payload;
+                  setTasks(prevTasks =>
+                    prevTasks.map(({ _id, ...rest }) => {
+                      return _id === task.id
+                        ? { _id, ...task }
+                        : { _id, ...rest };
+                    }),
+                  );
+                  break;
+                }
+                case 'delete': {
+                  const id = data.payload;
+                  setTasks(prevTasks =>
+                    prevTasks.filter(({ _id }) => id !== _id),
+                  );
+                  break;
+                }
+                default:
+              }
+              break;
+            }
+            default:
+              console.log('default');
+          }
+        },
+        addTask(data) {
+          return this.perform('add_task', data);
+        },
+        saveTask(data) {
+          return this.perform('save_task', data);
+        },
+        deleteTask(data) {
+          return this.perform('delete_task', data);
+        },
+      },
+    );
+
+    setTaskChannel(taskChannel);
+
+    return () => {
+      client.disconnect();
+    };
+  }, []);
+
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <HeaderBar handleDrawerToggle={handleDrawerToggle} />
-      {/* <LeftDrawer
+    <TaskContext.Provider value={{ tasks, setTasks }}>
+      <div className={classes.root}>
+        <CssBaseline />
+        <HeaderBar handleDrawerToggle={handleDrawerToggle} />
+        {/* <LeftDrawer
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
       /> */}
-      <MainContent />
-    </div>
+        <MainContent taskChannel={taskChannel} />
+      </div>
+    </TaskContext.Provider>
   );
 };
 
@@ -74,66 +160,39 @@ const PrivateRoute = ({ children, ...rest }) => {
   );
 };
 
-// const user_rawr = {
-//   nickname: 'geoboom',
-//   authToken: '123123123',
-// };
-
-const wsUrl = 'ws://localhost:3001/cable?nickname=geoboom';
-
 const AppRoot = () => {
-  const [user, setUser] = React.useState();
-  const [tasks, setTasks] = React.useState(INITIAL_TASKS);
+  const [user, setUser] = React.useState({
+    // nickname: 'geoboom',
+    // authToken: '123123',
+  });
 
   const authenticate = user => {
     setUser(user);
   };
 
-  React.useEffect(() => {
-    const client = new createConsumer(wsUrl);
-    const presenceChannel = client.subscriptions.create(
-      {
-        channel: 'PresenceChannel',
-      },
-      {
-        received(data) {
-          console.log(data);
-        },
-      },
-    );
-
-    setTimeout(() => {
-      presenceChannel.send({
-        body: 'testing',
-      });
-    }, 1500);
-  });
-
   return (
-    <TaskContext.Provider value={{ tasks, setTasks }}>
-      <AuthContext.Provider value={{ user, authenticate }}>
-        <Router>
-          <Switch>
-            <Route exact path="/">
-              <Redirect
-                to={{
-                  pathname: 'home',
-                }}
-              />
-            </Route>
-            <Route path="/auth">
-              <LoginSignup />
-            </Route>
-            <PrivateRoute path="/home">
-              <App />
-            </PrivateRoute>
-            <Route>
-              <App />
-            </Route>
-          </Switch>
-        </Router>
-      </AuthContext.Provider>
-    </TaskContext.Provider>
+    <AuthContext.Provider value={{ user, authenticate }}>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <Redirect
+              to={{
+                pathname: 'home',
+              }}
+            />
+          </Route>
+          <Route path="/auth">
+            <LoginSignup />
+          </Route>
+          <PrivateRoute path="/home">
+            <App />
+          </PrivateRoute>
+          <Route>
+            <App />
+          </Route>
+        </Switch>
+      </Router>
+    </AuthContext.Provider>
   );
 };
 

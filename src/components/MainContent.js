@@ -112,7 +112,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TaskList = ({ tasks, taskStatusChange }) => {
+const TaskList = ({ tasks, taskStatusChange, deleteTask }) => {
   const classes = useStyles();
 
   return (
@@ -125,6 +125,7 @@ const TaskList = ({ tasks, taskStatusChange }) => {
               e.stopPropagation();
               taskStatusChange(task._id, e.target.value);
             }}
+            deleteTask={() => deleteTask(task._id)}
           />
           <Divider />
         </div>
@@ -199,7 +200,7 @@ const multiFilter = filterMap => item => {
   return true;
 };
 
-const MainContent = () => {
+const MainContent = ({ taskChannel }) => {
   const { user } = useAuthContext();
   const { tasks, setTasks } = useTaskContext();
 
@@ -218,27 +219,32 @@ const MainContent = () => {
 
   const handleSelectFilterChange = event => {
     setStatusFilter(event.target.value);
-    setFilterMap({
-      ...filterMap,
+    setFilterMap(prevFilterMap => ({
+      ...prevFilterMap,
       status: STATUSES_FILTER[event.target.value],
-    });
+    }));
   };
 
   const handleUserFilterChange = event => {
+    event.persist();
     setUserFilter(event.target.checked);
-    setFilterMap({
-      ...filterMap,
+    setFilterMap(prevFilterMap => ({
+      ...prevFilterMap,
       nickname: event.target.checked ? [user.nickname] : [],
-    });
+    }));
   };
 
   const taskStatusChange = (_id, status) => {
-    setTasks(
-      tasks.map(task => {
-        if (task._id === _id) return { ...task, status };
-        return task;
-      }),
-    );
+    taskChannel.saveTask({
+      _id,
+      status,
+    });
+  };
+
+  const deleteTask = _id => {
+    taskChannel.deleteTask({
+      _id,
+    });
   };
 
   const addTask = description => {
@@ -254,15 +260,10 @@ const MainContent = () => {
       return;
     }
 
-    setTasks([
-      ...tasks,
-      {
-        _id: tasks[tasks.length - 1]._id + 1,
-        description: description,
-        nickname: user.nickname,
-        status: STATUSES[0],
-      },
-    ]);
+    taskChannel.addTask({
+      description,
+    });
+
     setModalOpen(false);
 
     return {};
@@ -301,8 +302,17 @@ const MainContent = () => {
           </Hidden>
           <hr style={{ width: '100%', marginTop: 10, marginBottom: 10 }} />
           <TaskList
-            tasks={tasks.filter(multiFilter(filterMap))}
+            tasks={tasks.filter(multiFilter(filterMap)).sort((t1, t2) => {
+              if (t1.status === STATUSES[0] && t2.status === STATUSES[1])
+                return 1;
+              if (t1.status === STATUSES[1] && t2.status === STATUSES[0])
+                return -1;
+              if (t1.created_at < t2.created_at) return 1;
+              if (t1.created_at > t2.created_at) return -1;
+              return 0;
+            })}
             taskStatusChange={taskStatusChange}
+            deleteTask={deleteTask}
           />
         </CardContent>
       </Card>
