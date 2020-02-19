@@ -46,6 +46,7 @@ const App = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [taskChannel, setTaskChannel] = React.useState();
   const [tasks, setTasks] = React.useState([]);
+  const [tasksLoading, setTasksLoading] = React.useState(true);
   const { user } = useAuthContext();
 
   const handleDrawerToggle = () => {
@@ -68,6 +69,7 @@ const App = () => {
               setTasks(
                 data.payload.map(({ id, ...rest }) => ({ _id: id, ...rest })),
               );
+              setTasksLoading(false);
               break;
             case 'task': {
               switch (data.operation) {
@@ -133,7 +135,7 @@ const App = () => {
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
       /> */}
-        <MainContent taskChannel={taskChannel} />
+        <MainContent taskChannel={taskChannel} tasksLoading={tasksLoading} />
       </div>
     </TaskContext.Provider>
   );

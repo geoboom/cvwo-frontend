@@ -20,6 +20,7 @@ import AddIcon from '@material-ui/icons/Add';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import teal from '@material-ui/core/colors/teal';
 import TaskItem from './TaskItem';
 import { useAuthContext } from '../context/auth';
@@ -200,7 +201,7 @@ const multiFilter = filterMap => item => {
   return true;
 };
 
-const MainContent = ({ taskChannel }) => {
+const MainContent = ({ taskChannel, tasksLoading }) => {
   const { user } = useAuthContext();
   const { tasks, setTasks } = useTaskContext();
 
@@ -301,19 +302,23 @@ const MainContent = ({ taskChannel }) => {
             <UserFilterCheckBox />
           </Hidden>
           <hr style={{ width: '100%', marginTop: 10, marginBottom: 10 }} />
-          <TaskList
-            tasks={tasks.filter(multiFilter(filterMap)).sort((t1, t2) => {
-              if (t1.status === STATUSES[0] && t2.status === STATUSES[1])
-                return 1;
-              if (t1.status === STATUSES[1] && t2.status === STATUSES[0])
-                return -1;
-              if (t1.created_at < t2.created_at) return 1;
-              if (t1.created_at > t2.created_at) return -1;
-              return 0;
-            })}
-            taskStatusChange={taskStatusChange}
-            deleteTask={deleteTask}
-          />
+          {tasksLoading ? (
+            <CircularProgress style={{ margin: '0 auto', marginTop: 60 }} />
+          ) : (
+            <TaskList
+              tasks={tasks.filter(multiFilter(filterMap)).sort((t1, t2) => {
+                if (t1.status === STATUSES[0] && t2.status === STATUSES[1])
+                  return 1;
+                if (t1.status === STATUSES[1] && t2.status === STATUSES[0])
+                  return -1;
+                if (t1.created_at < t2.created_at) return 1;
+                if (t1.created_at > t2.created_at) return -1;
+                return 0;
+              })}
+              taskStatusChange={taskStatusChange}
+              deleteTask={deleteTask}
+            />
+          )}
         </CardContent>
       </Card>
       <AddTaskModal
